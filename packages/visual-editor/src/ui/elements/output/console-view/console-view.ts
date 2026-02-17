@@ -29,7 +29,7 @@ import { type } from "../../../styles/host/type.js";
 import { icons } from "../../../styles/icons.js";
 import { iconSubstitute } from "../../../utils/icon-substitute.js";
 import { sharedStyles } from "./shared-styles.js";
-import { hasControlPart } from "../../../../runtime/control.js";
+import { hasControlPart } from "../../../../utils/control.js";
 
 function isConsoleUpdate(
   item: LLMContent | SimplifiedA2UIClient | ConsoleUpdate
@@ -310,7 +310,7 @@ export class ConsoleView extends SignalWatcher(LitElement) {
       }
 
       bb-floating-input {
-        --container-margin: 0;
+        --bb-floating-input-margin: 0px;
         width: 100%;
         padding-bottom: var(--bb-grid-size-6);
       }

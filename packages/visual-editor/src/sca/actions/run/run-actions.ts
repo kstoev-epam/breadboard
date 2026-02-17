@@ -21,7 +21,7 @@ import type {
 import { CLIENT_DEPLOYMENT_CONFIG } from "../../../ui/config/client-deployment-configuration.js";
 import { STATUS } from "../../../ui/types/types.js";
 import { getStepIcon } from "../../../ui/utils/get-step-icon.js";
-import { makeAction } from "../binder.js";
+import { makeAction, stopRun } from "../binder.js";
 import { asAction, ActionMode } from "../../coordination.js";
 import { Utils } from "../../utils.js";
 import { RunController } from "../../controller/subcontrollers/run/run-controller.js";
@@ -33,7 +33,7 @@ import {
 import { edgeToString } from "../../../ui/utils/workspace.js";
 import { decodeErrorData } from "../../utils/decode-error.js";
 import { createAppScreen, tickScreenProgress } from "../../utils/app-screen.js";
-import { computeControlState } from "../../../runtime/control.js";
+import { computeControlState } from "../../../utils/control.js";
 import { toLLMContentArray } from "../../utils/common.js";
 import {
   cleanupStoppedInput,
@@ -74,14 +74,7 @@ export const stop = asAction(
   "Run.stop",
   ActionMode.Immediate,
   async (): Promise<void> => {
-    const { run } = bind.controller;
-    if (run.main.abortController) {
-      run.main.abortController.abort();
-    }
-    run.main.reset();
-    run.screen.reset();
-    run.renderer.reset();
-    run.main.setStatus(STATUS.STOPPED);
+    stopRun(bind.controller);
   }
 );
 

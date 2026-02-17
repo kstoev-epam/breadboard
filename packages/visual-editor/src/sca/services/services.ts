@@ -6,7 +6,8 @@
 
 import { GoogleDriveClient } from "@breadboard-ai/utils/google-drive/google-drive-client.js";
 import type { EmbedHandler } from "@breadboard-ai/types/embedder.js";
-import { RuntimeConfig } from "../../runtime/types.js";
+import type { OpalShellHostProtocol } from "@breadboard-ai/types/opal-shell-protocol.js";
+import { RuntimeConfig } from "../../utils/graph-types.js";
 import type { GlobalConfig } from "../../ui/contexts/global-config.js";
 import { createActionTracker } from "../../ui/utils/action-tracker.js";
 import { SigninAdapter } from "../../ui/utils/signin-adapter.js";
@@ -26,7 +27,7 @@ import { IntegrationManagerService } from "./integration-managers.js";
 import { createA2ModuleFactory } from "../../a2/runnable-module-factory.js";
 import { AgentContext } from "../../a2/agent/agent-context.js";
 import { createGoogleDriveBoardServer } from "../../ui/utils/create-server.js";
-import { createA2Server } from "../../a2/index.js";
+
 import { createLoader } from "../../engine/loader/index.js";
 import { Autonamer } from "./autonamer.js";
 import { AppCatalystApiClient } from "../../ui/flow-gen/app-catalyst.js";
@@ -78,6 +79,7 @@ export interface AppServices {
    */
   stateEventBus: EventTarget;
   statusUpdates: StatusUpdatesService;
+  shellHost: OpalShellHostProtocol;
 }
 
 let instance: AppServices | null = null;
@@ -147,8 +149,7 @@ export function services(
       config.shellHost.findUserOpalFolder,
       config.shellHost.listUserOpals
     );
-    const a2Server = createA2Server();
-    const loader = createLoader([googleDriveBoardServer, a2Server]);
+    const loader = createLoader(googleDriveBoardServer);
     const graphStoreArgs = {
       loader,
       sandbox,
@@ -190,6 +191,7 @@ export function services(
       signinAdapter,
       stateEventBus: new EventTarget(),
       statusUpdates: new StatusUpdatesService(),
+      shellHost: config.shellHost,
     } satisfies AppServices;
   }
 
