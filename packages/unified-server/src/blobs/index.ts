@@ -55,10 +55,10 @@ async function get(
   response: Response
 ): Promise<void> {
   const blobId = request.params["blobId"] ?? "";
-  if (!isUUID(blobId)) {
+  if (!isUUID(blobId as any)) {
     badRequest(response, "Invalid blob ID");
     return;
   }
 
-  await serveBlob(config.storageBucket!, blobId, request, response);
+  await serveBlob(config.storageBucket!, blobId as any, request, response);
 }

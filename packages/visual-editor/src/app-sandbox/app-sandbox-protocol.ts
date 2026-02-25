@@ -48,3 +48,20 @@ export function isAppSandboxRequestOpenPopupMessage(
       "app-sandbox-request-open-popup"
   );
 }
+
+export type AppSandboxSaveImageMessage = {
+  type: "app-sandbox-save-image";
+  src: string;
+};
+ 
+export function isAppSandboxSaveImageMessage(
+  data: unknown
+): data is AppSandboxSaveImageMessage {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    (data as Partial<AppSandboxSaveImageMessage>).type ===
+      "app-sandbox-save-image"
+  );
+}
+

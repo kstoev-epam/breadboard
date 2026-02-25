@@ -97,7 +97,32 @@ function getHTMLOutput(screen: AppScreenOutput): string | null {
         isInlineData(firstPart) &&
         firstPart.inlineData.mimeType === "text/html"
       ) {
-        return atob(firstPart.inlineData.data);
+        const html = firstPart.inlineData.data;
+        // Inject interaction using a regex.
+        // We can't really parse the HTML here because we don't have a DOM.
+        // We could use a library, but that's a heavy dependency for this.
+        //
+        // This is a bit brittle, but it's the best we can do without
+        // parsing the HTML.
+        const newHtml = html.replace(
+          /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*\/?>/gi,
+          (match, src) => {
+            console.log('srccc', src)
+            return `<div class="bb-image-container" style="position: relative; display: inline-block;">
+            ${match}
+            <button
+              class="bb-image-download-button"
+              style="position: absolute; bottom: 8px; right: 8px; background: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 4px; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+              onclick="window.parent.postMessage({ type: 'app-sandbox-save-image', src: '${src}' }, '*')"
+              title="Download Image"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+          </div>`;
+          }
+        );
+        console.log('fkjsdhkjfsdhkfjsd', newHtml);
+        return atob(newHtml);
       }
     }
   }

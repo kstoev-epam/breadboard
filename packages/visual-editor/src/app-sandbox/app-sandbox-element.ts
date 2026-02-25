@@ -16,6 +16,8 @@ import {
   isAppSandboxReadyMessage,
   type AppSandboxRequestOpenPopupMessage,
   isAppSandboxRequestOpenPopupMessage,
+  type AppSandboxSaveImageMessage,
+  isAppSandboxSaveImageMessage,
 } from "./app-sandbox-protocol.js";
 import { scaContext } from "../sca/context/context.js";
 import { SCA } from "../sca/sca.js";
@@ -119,6 +121,9 @@ export class AppSandbox extends SignalWatcher(LitElement) {
         this.#sendSrcdocToIframe();
       } else if (isAppSandboxRequestOpenPopupMessage(event.data)) {
         this.#onIframeRequestOpenPopup(event.data);
+      } else if (isAppSandboxSaveImageMessage(event.data)) {
+        console.log('event.data:::', event.data)
+        this.#onIframeSaveImage(event.data);
       }
     }
   };
@@ -138,5 +143,12 @@ export class AppSandbox extends SignalWatcher(LitElement) {
     if (allow) {
       window.open(url, "_blank", "noreferrer");
     }
+  }
+
+  #onIframeSaveImage({ src }: AppSandboxSaveImageMessage) {
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = "";
+    a.click();
   }
 }

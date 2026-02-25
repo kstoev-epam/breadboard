@@ -177,7 +177,7 @@ export function makeDriveProxyMiddleware({
     "/drive/v3/files/:id",
     async (req: ExpressRequest, res: ExpressResponse) => {
       const fileId = req.params["id"];
-      if (isMediaRequest(req) && shouldCacheMedia(fileId)) {
+      if (isMediaRequest(req) && shouldCacheMedia(fileId as any)) {
         proxyWithCaching(req, res, `media:${fileId}`);
       } else {
         proxyDirectly(req, res);
